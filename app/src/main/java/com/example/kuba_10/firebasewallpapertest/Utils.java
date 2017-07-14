@@ -1,8 +1,10 @@
 package com.example.kuba_10.firebasewallpapertest;
 
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -54,6 +56,16 @@ public class Utils {
     }
 
     public void saveImageToSDCard(Bitmap bitmap) {
+
+
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            Log.d("MyApp", "No SDCARD");
+        } else {
+            File directory = new File(Environment.getExternalStorageDirectory()+File.separator+context.getString(R.string.gallery_name));
+            directory.mkdirs();
+        }
+
+
         File myDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -133,6 +145,20 @@ public class Utils {
         return target;
     }
 
+    public void setAsWallpaper(Bitmap bitmap) {
+        try {
+            WallpaperManager wm = WallpaperManager.getInstance(context);
 
+            wm.setBitmap(bitmap);
+            Toast.makeText(context,
+                    context.getString(R.string.toast_wallpaper_set),
+                    Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context,
+                    context.getString(R.string.toast_wallpaper_set_failed),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

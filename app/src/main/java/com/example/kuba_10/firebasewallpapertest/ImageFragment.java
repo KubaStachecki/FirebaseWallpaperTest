@@ -3,6 +3,7 @@ package com.example.kuba_10.firebasewallpapertest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -106,8 +107,14 @@ public class ImageFragment extends Fragment {
 //                bigImage.buildDrawingCache(true);
 //                Bitmap bitmap = Bitmap.createBitmap(bigImage.getDrawingCache());
 //                bigImage.setDrawingCacheEnabled(false); // clear drawing cache
+
+
 //
 //                utils.saveImageToSDCard(bitmap);
+
+                Bitmap bm2 = ((BitmapDrawable)bigImage.getDrawable()).getBitmap();
+
+                utils.saveImageToSDCard(bm2);
 
             }
         });
@@ -118,8 +125,6 @@ public class ImageFragment extends Fragment {
                 Toast.makeText(getActivity(), "share", Toast.LENGTH_SHORT).show();
 
 
-
-
             }
         });
 
@@ -128,11 +133,13 @@ public class ImageFragment extends Fragment {
             public void onClick(View view) {
                 Toast.makeText(getActivity(), "set", Toast.LENGTH_SHORT).show();
 
+                Bitmap bm3 = ((BitmapDrawable)bigImage.getDrawable()).getBitmap();
 
-
+               utils.setAsWallpaper(bm3);
 
             }
         });
 
 
-}}
+    }
+}

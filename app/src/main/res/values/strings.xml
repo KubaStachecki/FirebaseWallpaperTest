@@ -7,4 +7,6 @@
     <string name="toast_saved">Picture Saved</string>
     <string name="toast_saved_failed">Error: picture not saved</string>
     <string name="gallery_name">KubaWallpapersGallery</string>
+    <string name="toast_wallpaper_set">wallpaper set!</string>
+    <string name="toast_wallpaper_set_failed">wallpaper set failed</string>
 </resources>
