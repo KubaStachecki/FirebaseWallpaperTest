@@ -1,12 +1,14 @@
 package com.example.kuba_10.firebasewallpapertest;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kuba_10.firebasewallpapertest.Model.Image;
 import com.squareup.picasso.Picasso;
@@ -22,7 +24,7 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     private int imageSizePixelsH;
     private Context context;
     private List<Image> data_list;
-
+    private FragmentUtils fragmentUtils;
 
 
 
@@ -34,33 +36,50 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
         imageSizePixelsW = context.getResources().getDimensionPixelSize(R.dimen.card_image_width);
         imageSizePixelsH = context.getResources().getDimensionPixelSize(R.dimen.card_image_heigth);
 
+        fragmentUtils = (FragmentUtils) context;
+
 
 
     }
-
-
 
 
     @Override
     public WallAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card, parent, false);
         return new ViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(WallAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(WallAdapter.ViewHolder holder,final int position) {
+
 
         Picasso.with(context).load(data_list.get(position).getUrl())
 
-                .resize(imageSizePixelsW,imageSizePixelsH)
+                .resize(imageSizePixelsW, imageSizePixelsH)
                 .centerCrop()
                 .into(holder.imageView);
 
+        holder.artist.setText(data_list.get(position).getArtist());
+        holder.comment.setText(data_list.get(position).getComment());
+
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Image", data_list.get(position));
+
+                fragmentUtils.openFragment(ImageFragment.newInstance(bundle));
 
 
 
+//                Toast.makeText(context, "klik", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
 
     }
@@ -77,17 +96,12 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
         public ImageView imageView;
 
 
-
-
-
         public ViewHolder(View itemView) {
             super(itemView);
 
             artist = (TextView) itemView.findViewById(R.id.artist);
             comment = (TextView) itemView.findViewById(R.id.comment);
             imageView = (ImageView) itemView.findViewById(R.id.image);
-
-
 
         }
     }
