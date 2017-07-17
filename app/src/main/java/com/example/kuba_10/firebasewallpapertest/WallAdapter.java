@@ -56,7 +56,6 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
         Picasso.with(context).load(data_list.get(position).getUrl())
                 .placeholder(R.drawable.progress_animation)
                 .fit()
-
                 .centerCrop()
                 .into(holder.imageView);
 
