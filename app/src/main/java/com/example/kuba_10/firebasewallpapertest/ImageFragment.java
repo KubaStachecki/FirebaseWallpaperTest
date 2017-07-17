@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.kuba_10.firebasewallpapertest.Model.Image;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -32,24 +35,24 @@ public class ImageFragment extends Fragment {
     @BindView(R.id.share_btn)
     AppCompatButton shareBtn;
 
-
     @BindView(R.id.set_btn)
     AppCompatButton setBtn;
 
 
-    Bundle bundle;
     Utils utils;
+
+    Image image;
+    Bitmap thisBitmap;
+
+    String imageName;
 
 
     public ImageFragment() {
         // Required empty public constructor
     }
 
-
-    // TODO: Rename and change types and number of parameters
     public static ImageFragment newInstance(Bundle bundle) {
         ImageFragment fragment = new ImageFragment();
-
         fragment.setArguments(bundle);
 
 
@@ -62,6 +65,7 @@ public class ImageFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().hide();
 
+
     }
 
     @Override
@@ -69,18 +73,30 @@ public class ImageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_image, container, false);
-
         ButterKnife.bind(this, view);
 
-        Image image = getArguments().getParcelable("Image");
 
+        image = getArguments().getParcelable("Image");
         Picasso.with(getActivity()).load(image.getUrl())
 
-                .resize(800, 800)
+                .fit()
                 .centerCrop()
-                .into(bigImage);
 
-        image.getUrl();
+                .placeholder(R.drawable.progress_animation)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+
+                .into(bigImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        thisBitmap = ((BitmapDrawable) bigImage.getDrawable()).getBitmap();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Toast.makeText(getActivity(), "error while loading picture", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
         return view;
     }
@@ -91,30 +107,22 @@ public class ImageFragment extends Fragment {
         super.onStart();
 
         utils = new Utils(getActivity());
+        String[] urlParts = image.getUrl().split("-");
+        imageName = urlParts[urlParts.length - 1];
 
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "save", Toast.LENGTH_SHORT).show();
-
-//                bigImage.setDrawingCacheEnabled(true);
-//
-//                bigImage.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-//                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//                bigImage.layout(0, 0, bigImage.getMeasuredWidth(), bigImage.getMeasuredHeight());
-//
-//                bigImage.buildDrawingCache(true);
-//                Bitmap bitmap = Bitmap.createBitmap(bigImage.getDrawingCache());
-//                bigImage.setDrawingCacheEnabled(false); // clear drawing cache
 
 
-//
-//                utils.saveImageToSDCard(bitmap);
+                if (thisBitmap == null) {
+                    Toast.makeText(getActivity(), "wait for image to load", Toast.LENGTH_SHORT).show();
+                } else {
+                    utils.saveImageToSDCard(thisBitmap, imageName);
+                    Log.d(MainActivity.TAAAAG, imageName + "    zapisany");
+                }
 
-                Bitmap bm2 = ((BitmapDrawable)bigImage.getDrawable()).getBitmap();
-
-                utils.saveImageToSDCard(bm2);
 
             }
         });
@@ -122,8 +130,13 @@ public class ImageFragment extends Fragment {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "share", Toast.LENGTH_SHORT).show();
 
+                if (thisBitmap == null) {
+                    Toast.makeText(getActivity(), "wait for image to load", Toast.LENGTH_SHORT).show();
+                } else {
+                    utils.shareWallpaperUrl(thisBitmap, imageName);
+                    Log.d(MainActivity.TAAAAG, imageName + "     udostepniony");
+                }
 
             }
         });
@@ -131,15 +144,26 @@ public class ImageFragment extends Fragment {
         setBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "set", Toast.LENGTH_SHORT).show();
 
-                Bitmap bm3 = ((BitmapDrawable)bigImage.getDrawable()).getBitmap();
-
-               utils.setAsWallpaper(bm3);
-
+                if (thisBitmap == null) {
+                    Toast.makeText(getActivity(), "wait for image to load", Toast.LENGTH_SHORT).show();
+                } else {
+                    utils.setAsWallpaper(thisBitmap, imageName);
+                    Log.d(MainActivity.TAAAAG, imageName + "ustawiony");
+                }
             }
         });
 
-
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        image = null;
+        thisBitmap = null;
+        imageName = null;
+    }
+
+
 }

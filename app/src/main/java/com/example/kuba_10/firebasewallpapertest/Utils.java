@@ -2,10 +2,12 @@ package com.example.kuba_10.firebasewallpapertest;
 
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -28,137 +30,109 @@ import java.util.Random;
 public class Utils {
 
 
-
     private Context context;
-    private PreferenceManager pref;
+//    private PreferenceManager pref;
+
+
 
     public Utils(Context context) {
         this.context = context;
     }
 
-    @SuppressWarnings("deprecation")
-    public int getScreenWidth() {
-        int columnWidth;
-        WindowManager wm = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
+//    public int getScreenWidth() {
+//        int columnWidth;
+//        WindowManager wm = (WindowManager) context
+//                .getSystemService(Context.WINDOW_SERVICE);
+//        Display display = wm.getDefaultDisplay();
+//
+//        final Point point = new Point();
+//        try {
+//            display.getSize(point);
+//        } catch (java.lang.NoSuchMethodError ignore) {
+//            // Older device
+//            point.x = display.getWidth();
+//            point.y = display.getHeight();
+//        }
+//        columnWidth = point.x;
+//        return columnWidth;
+//    }
 
-        final Point point = new Point();
-        try {
-            display.getSize(point);
-        } catch (java.lang.NoSuchMethodError ignore) {
-            // Older device
-            point.x = display.getWidth();
-            point.y = display.getHeight();
-        }
-        columnWidth = point.x;
-        return columnWidth;
-    }
-
-    public void saveImageToSDCard(Bitmap bitmap) {
-
-
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            Log.d("MyApp", "No SDCARD");
-        } else {
-            File directory = new File(Environment.getExternalStorageDirectory()+File.separator+context.getString(R.string.gallery_name));
-            directory.mkdirs();
-        }
+    public File saveImageToSDCard(Bitmap bitmap, String imageName) {
 
 
-        File myDir = new File(
+        File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 context.getString(R.string.gallery_name));
+        if (!mediaStorageDir.exists()) {
+            Log.d(MainActivity.TAAAAG, "directory was NOT present at check - created");
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(MainActivity.TAAAAG, "failed to create directory");}
 
-        myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Wallpaper-" + n + ".jpg";
-        File file = new File(myDir, fname);
+        }
+
+        mediaStorageDir.mkdirs();
+
+        File file = new File(mediaStorageDir, imageName + ".jpg");
+
         if (file.exists())
             file.delete();
+//            Toast.makeText(context, "plik istnieje", Toast.LENGTH_SHORT).show();
+        Log.d(MainActivity.TAAAAG, "there was a file with this name - deleted and saved again" + file.getAbsolutePath());
+
+
         try {
             FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.toast_saved).replace("#",
-                            "\"" + context.getString(R.string.gallery_name) + "\""),
-                    Toast.LENGTH_SHORT).show();
-            Log.d("APP_UTILS", "Wallpaper saved to: " + file.getAbsolutePath());
+
+            Log.d(MainActivity.TAAAAG, "Wallpaper saved to: " + file.getAbsolutePath());
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context,
-                    context.getString(R.string.toast_saved_failed),
-                    Toast.LENGTH_SHORT).show();
+
+            Log.d(MainActivity.TAAAAG, "Wallpaper not saved" + e);
+
+
         }
+
+        return file;
     }
 
 
-    public static void imageDownload(Context ctx, String targetUrl, String fromUrl){
-        Picasso.with(ctx)
-                .load(fromUrl)
-                .into(getTarget(targetUrl));
+    public void setAsWallpaper(Bitmap bitmap, String imagename) {
+
+        Uri uri = Uri.fromFile(saveImageToSDCard(bitmap, imagename));
+
+        Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setDataAndType(uri, "image/jpeg");
+        intent.putExtra("mimeType", "image/jpeg");
+        context.startActivity(Intent.createChooser(intent, "Set as:"));
+
+
     }
 
-    //target to save
-    private static Target getTarget(final String url){
-        Target target = new Target(){
+    public void shareWallpaperUrl(Bitmap bitmap, String imagename){
 
-            @Override
-            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                new Thread(new Runnable() {
 
-                    @Override
-                    public void run() {
+        Uri uri = Uri.fromFile(saveImageToSDCard(bitmap, imagename));
 
-                        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" + url);
-                        try {
-                            file.createNewFile();
-                            FileOutputStream ostream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, ostream);
-                            ostream.flush();
-                            ostream.close();
-                        } catch (IOException e) {
-                            Log.e("IOException", e.getLocalizedMessage());
-                        }
-                    }
-                }).start();
 
-            }
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/jpg");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(Intent.createChooser(shareIntent, "Share image using"));
 
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
 
-            }
 
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        };
-        return target;
     }
 
-    public void setAsWallpaper(Bitmap bitmap) {
-        try {
-            WallpaperManager wm = WallpaperManager.getInstance(context);
 
-            wm.setBitmap(bitmap);
-            Toast.makeText(context,
-                    context.getString(R.string.toast_wallpaper_set),
-                    Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(context,
-                    context.getString(R.string.toast_wallpaper_set_failed),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+
+
+
+
 
 }

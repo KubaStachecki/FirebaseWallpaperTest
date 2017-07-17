@@ -27,7 +27,6 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     private FragmentUtils fragmentUtils;
 
 
-
     public WallAdapter(Context context, List<Image> data_list) {
         this.context = context;
         this.data_list = data_list;
@@ -37,7 +36,6 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
         imageSizePixelsH = context.getResources().getDimensionPixelSize(R.dimen.card_image_heigth);
 
         fragmentUtils = (FragmentUtils) context;
-
 
 
     }
@@ -52,12 +50,13 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(WallAdapter.ViewHolder holder,final int position) {
+    public void onBindViewHolder(WallAdapter.ViewHolder holder, final int position) {
 
 
         Picasso.with(context).load(data_list.get(position).getUrl())
+                .placeholder(R.drawable.progress_animation)
+                .fit()
 
-                .resize(imageSizePixelsW, imageSizePixelsH)
                 .centerCrop()
                 .into(holder.imageView);
 
@@ -73,7 +72,6 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
                 bundle.putParcelable("Image", data_list.get(position));
 
                 fragmentUtils.openFragment(ImageFragment.newInstance(bundle));
-
 
 
 //                Toast.makeText(context, "klik", Toast.LENGTH_SHORT).show();

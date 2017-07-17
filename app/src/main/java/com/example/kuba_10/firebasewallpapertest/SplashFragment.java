@@ -23,7 +23,7 @@ public class SplashFragment extends DialogFragment {
     List<Image> list;
 
 
-    private final int SPLASH_TIME_OUT = 5000;
+    private final int SPLASH_TIME_OUT = 1000;
 
 
     public SplashFragment() {
