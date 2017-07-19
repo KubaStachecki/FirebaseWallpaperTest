@@ -9,4 +9,9 @@
     <string name="gallery_name">KubaWallpapersGallery</string>
     <string name="toast_wallpaper_set">wallpaper set!</string>
     <string name="toast_wallpaper_set_failed">wallpaper set failed</string>
+
+
+
+
+    <string name="google_maps_api_key">AIzaSyDBvAsgtL6ffaCm_zO_E-_RNO0d0LPdwLM</string>
 </resources>
