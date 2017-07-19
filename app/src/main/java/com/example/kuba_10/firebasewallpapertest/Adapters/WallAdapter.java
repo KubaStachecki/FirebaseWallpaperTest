@@ -1,4 +1,4 @@
-package com.example.kuba_10.firebasewallpapertest;
+package com.example.kuba_10.firebasewallpapertest.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.kuba_10.firebasewallpapertest.Fragments.FragmentUtils;
+import com.example.kuba_10.firebasewallpapertest.Fragments.ImageFragment;
 import com.example.kuba_10.firebasewallpapertest.Model.Image;
+import com.example.kuba_10.firebasewallpapertest.R;
+import com.example.kuba_10.firebasewallpapertest.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,6 +28,7 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     private Context context;
     private List<Image> data_list;
     private FragmentUtils fragmentUtils;
+    Utils utils;
 
 
     public WallAdapter(Context context, List<Image> data_list) {
@@ -37,6 +41,8 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
 
         fragmentUtils = (FragmentUtils) context;
 
+        utils = new Utils(context);
+
 
     }
 
@@ -44,7 +50,7 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     @Override
     public WallAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_card, parent, false);
         return new ViewHolder(view);
 
     }
@@ -53,10 +59,14 @@ public class WallAdapter extends RecyclerView.Adapter<WallAdapter.ViewHolder> {
     public void onBindViewHolder(WallAdapter.ViewHolder holder, final int position) {
 
 
+
+
         Picasso.with(context).load(data_list.get(position).getUrl())
-                .placeholder(R.drawable.progress_animation)
-                .fit()
+                .resize((utils.getScreenWidth()/2)-20, (utils.getScreenWidth()/2)-20)
+
                 .centerCrop()
+
+//                .placeholder(R.drawable.progress_animation)
                 .into(holder.imageView);
 
         holder.artist.setText(data_list.get(position).getArtist());

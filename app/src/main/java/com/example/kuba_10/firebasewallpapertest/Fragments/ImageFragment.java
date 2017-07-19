@@ -1,10 +1,7 @@
-package com.example.kuba_10.firebasewallpapertest;
+package com.example.kuba_10.firebasewallpapertest.Fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -15,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.kuba_10.firebasewallpapertest.MainActivity;
 import com.example.kuba_10.firebasewallpapertest.Model.Image;
+import com.example.kuba_10.firebasewallpapertest.R;
+import com.example.kuba_10.firebasewallpapertest.Utils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;

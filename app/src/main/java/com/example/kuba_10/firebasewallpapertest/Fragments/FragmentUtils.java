@@ -1,4 +1,4 @@
-package com.example.kuba_10.firebasewallpapertest;
+package com.example.kuba_10.firebasewallpapertest.Fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;

@@ -1,36 +1,34 @@
 package com.example.kuba_10.firebasewallpapertest;
 
+import android.app.ActionBar;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import com.example.kuba_10.firebasewallpapertest.Adapters.WallAdapter;
+import com.example.kuba_10.firebasewallpapertest.Fragments.FragmentUtils;
+import com.example.kuba_10.firebasewallpapertest.Fragments.GalleryFragment;
+import com.example.kuba_10.firebasewallpapertest.Fragments.SplashFragment;
 import com.example.kuba_10.firebasewallpapertest.Model.Image;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements FragmentUtils  {
+public class MainActivity extends AppCompatActivity implements FragmentUtils {
 
 
     public static final String TAAAAG = "TAAAAG";
-    List<Image> imageList;
-    WallAdapter wallAdapter;
-    private GridLayoutManager gridManager;
-    private RecyclerView recyclerView;
-    private FrameLayout frameLayout;
+
     private static final int REQUEST_WRITE_PERMISSION = 786;
 
 
@@ -49,72 +47,47 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils  {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
         getSupportActionBar().hide();
+
 
         requestPermission();
 
         SplashFragment.newInstance().show(getSupportFragmentManager(), "");
 
 
-        imageList = new ArrayList<>();
-        frameLayout = (FrameLayout) findViewById(R.id.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        openFragment(GalleryFragment.newInstance());
 
-        gridManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridManager);
-
-        wallAdapter = new WallAdapter(this, imageList);
-        recyclerView.setAdapter(wallAdapter);
-
-
-        getImagesFromFirebase();
 
 
     }
 
 
-    private void getImagesFromFirebase() {
-        FirebaseDatabase fDatabase = FirebaseDatabase.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        DatabaseReference databaseReference = fDatabase.getReference();
-        databaseReference.child("wallpapers").addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-
-            @Override
-            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
 
-                Log.d(TAAAAG, Long.toString(dataSnapshot.getChildrenCount()) + "UDALO SIE POLACZYC");
-                imageList.clear();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
 
-                for (com.google.firebase.database.DataSnapshot child : dataSnapshot.getChildren()) {
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        getSupportActionBar().hide();
 
 
-                    Image image = child.getValue(Image.class);
-
-                    imageList.add(image);
-
-                    Log.d(TAAAAG, imageList.size() + "ROZMIAR LISTY");
-
-                }
-
-                wallAdapter.notifyDataSetChanged();
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override
@@ -130,18 +103,10 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils  {
         this.getSupportFragmentManager()
                 .beginTransaction()
 //                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                .replace(R.id.activity_main, fragment)
+                .replace(R.id.main_container, fragment)
                 .addToBackStack(null)
                 .commit();
     }
-
-
-
-
-
-
-
-
 
 
 //        File file = new File(this.getFilesDir(), "/kuuuuba");
@@ -156,8 +121,7 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils  {
 //        Toast.makeText(this, "folder juz byl", Toast.LENGTH_SHORT).show();
 
 
-
-    }
+}
 
 
 

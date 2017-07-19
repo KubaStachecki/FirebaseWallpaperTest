@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
 
     android:background="@android:color/holo_orange_light"
-    tools:context="com.example.kuba_10.firebasewallpapertest.SplashFragment">
+    tools:context="com.example.kuba_10.firebasewallpapertest.Fragments.SplashFragment">
 
 
 
