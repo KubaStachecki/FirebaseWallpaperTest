@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils, Vi
         openFragment(StartFragment.newInstance());
 
 
-
+        materialDesignFAM.close(true);
 
 
     }
@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils, Vi
             case R.id.material_design_floating_action_menu_item1:
 
                 openFragment(MapFragment.newInstance());
+                materialDesignFAM.close(true);
+
 
                 break;
 
@@ -128,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils, Vi
 
 
                 openFragment(StartFragment.newInstance());
+                materialDesignFAM.close(true);
+
 
                 break;
 
@@ -135,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils, Vi
 
 
                 openFragment(NewsFragment.newInstance());
+                materialDesignFAM.close(true);
+
 
                 break;
 
@@ -143,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements FragmentUtils, Vi
 
 
                 openFragment(GalleryFragment.newInstance());
+                materialDesignFAM.close(true);
+
 
                 break;
 
